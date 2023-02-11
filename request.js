@@ -873,6 +873,12 @@ Request.prototype.onRequestError = function (error) {
     self.req.end()
     return
   }
+  // hotfix for nodejs 16 bug
+  // https://github.com/nodejs/node/issues/42154
+  if (error.code === 'ECONNRESET' && this.response && this.response.complete) {
+    // console.log('request: ignore nodejs 16 bug');
+    return
+  }
   self.clearTimeout()
   self.emit('error', error)
 }
